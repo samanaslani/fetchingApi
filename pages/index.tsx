@@ -1,3 +1,4 @@
+import Slider from '@/components/Slider';
 import Head from 'next/head';
 
 export default function Home() {
@@ -10,6 +11,9 @@ export default function Home() {
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"></link>
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <div>
+        <Slider/>
+      </div>
     </>
   )
 }

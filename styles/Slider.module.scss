@@ -1,0 +1,59 @@
+.sliderTitleAnimation {
+  animation: sliderTitleAnimation 1000ms forwards
+    cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+@keyframes sliderTitleAnimation {
+  from {
+    transform: translate(0, -10000%);
+  }
+  to {
+    transform: translate(0%, 0%);
+  }
+}
+
+.hideActiveSliderFromLeft{
+    animation-name:hideActiveSliderFromLeft ;
+    animation-fill-mode: forwards;
+    animation-duration: 1s;
+    visibility: hidden;
+    transition: visibility 1s;
+}
+
+@keyframes hideActiveSliderFromLeft{
+    from{transform: translate(0,0);}
+    to{transform: translate(-100%,0);}
+}
+.showActiveSliderFromLeft{
+    animation-name:showActiveSliderFromLeft ;
+    animation-fill-mode: forwards;
+    animation-duration: 1s;
+}
+
+@keyframes showActiveSliderFromLeft{
+    from{transform: translate(100%,0);}
+    to{transform: translate(0,0);}
+}
+// next button
+.hideActiveSliderFromRight{
+    animation-name:hideActiveSliderFromRight ;
+    animation-fill-mode: forwards;
+    animation-duration: 1s;
+    visibility: hidden;
+    transition: visibility 1s;
+}
+
+@keyframes hideActiveSliderFromRight{
+    from{transform: translate(0,0);}
+    to{transform: translate(100%,0);}
+}
+.showActiveSliderFromRight{
+    animation-name:showActiveSliderFromRight ;
+    animation-fill-mode: forwards;
+    animation-duration: 1s;
+}
+
+@keyframes showActiveSliderFromRight{
+    from{transform: translate(-100%,0);}
+    to{transform: translate(0,0);}
+}
+
