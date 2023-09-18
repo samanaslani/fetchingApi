@@ -4,9 +4,9 @@ import Header from '@/components/Header';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <>
+    <div style={{fontFamily:'Barlow'}}>
     <Header/>
     <Component {...pageProps} />
-    </>
+    </div>
   )
 }
