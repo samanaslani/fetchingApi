@@ -193,7 +193,7 @@ function Header() {
                     return (
                       <div
                         key={item.id}
-                        onClick={() => router.push(`/shop/${item.id}`)}
+                        onClick={() => router.push(`/tasks/${item.id}`)}
                         onMouseOver={(e: React.MouseEvent<HTMLDivElement>) =>
                           ((e.target as HTMLDivElement).style.backgroundColor =
                             "rgb(230,230,230)")
@@ -260,12 +260,12 @@ function Header() {
                   className={` border-end border-muted px-2  ${Styles.liTablet}`}
                 >
                   <Link
-                    href={"/shop"}
+                    href={"/tasks"}
                     passHref
                     className="text-decoration-none text-capitalize"
                     style={{ color: "rgba(255,255,255,0.9)" }}
                   >
-                    shop
+                    tasks
                   </Link>
                 </li>
                 <li
@@ -341,12 +341,12 @@ function Header() {
           </li>
           <li className={`  px-2  ${Styles.liTablet} mt-3`}>
             <Link
-              href={"/shop"}
+              href={"/tasks"}
               passHref
               className="text-decoration-none text-capitalize"
               style={{ color: "rgba(255,255,255,0.9)" }}
             >
-              shop
+              tasks
             </Link>
           </li>
           <li className={`  px-2  ${Styles.liTablet} mt-3`}>
