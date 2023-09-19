@@ -1,9 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
+import Cookies from 'js-cookie'
 import Head from "next/head";
 import { Tooltip, Switch, TextField, Button } from "@mui/material";
 import Link from "next/link";
 import Styles from "../styles/Tasks.module.scss";
-function tasks() {
+import { GetServerSideProps } from "next"; 
+type taskType = {
+  id: number;
+  title: string;
+  description: string;
+  status: boolean;
+};
+type tasksTypeFromSSR = {
+  tasks: taskType[];
+};
+function Tasks({tasks}:tasksTypeFromSSR) {
+
   // handleShowDescription
   const handleShowDescription = (e: React.MouseEvent<HTMLSpanElement>) => {
     // all arrow up add display none and all arrow down add display inline
@@ -113,18 +125,54 @@ function tasks() {
     wrapper.style.visibility = "visible";
     wrapper.style.zIndex = "999";
   };
-//   handleHideForm
-const handleHideForm=(e:React.MouseEvent)=>{
+  //   handleHideForm
+  const handleHideForm = (e: React.MouseEvent) => {
     let getForm = document.querySelector(".formSection") as HTMLFormElement;
     getForm.classList.add("invisible");
     getForm.classList.remove(Styles.showForm);
     getForm.classList.add(Styles.hideForm);
-    getForm.style.transition='all 1s';
+    getForm.style.transition = "all 1s";
     let wrapper = document.querySelector(".wrapper") as HTMLDivElement;
     wrapper.style.visibility = "hidden";
     wrapper.style.zIndex = "-1";
     wrapper.style.transition = "all 0.5s";
+  };
+  const [allTasks, setTasks] = useState<taskType[]>(tasks);
+  const [titleError, setTitleError] = useState(true);
+  const [descriptionError, setDescriptionError] = useState(true);
+  let titleRegex = /^[a-z\d\s]{3,20}$/i;
+  let descriptionRegex = /^[a-z\d\W]{3,}$/i;
+// handleShowTasks
+const handleShowTasks=async()=>{
+    const response=await fetch(`http://localhost:3000/api/tasks`);
+    const data=await response.json();
+    setTasks(data);
 }
+  //   handleAddingTask
+  const handleAddingTask = async (e:React.MouseEvent<HTMLButtonElement>) => {
+    
+    let title=document.querySelector('#title') as HTMLInputElement;
+    let desc=document.querySelector('#description') as HTMLInputElement;
+    let newTask={
+        title:title.value,
+        description:desc.value,
+    }
+   
+if(!titleError && !descriptionError){
+    const response=await fetch(`http://localhost:3000/api/tasks`,{
+        method:"POST",
+        body:JSON.stringify(newTask),
+        headers:{
+            "Content-Type":"application/json"
+        }
+    });
+    const data=await response.json();
+    
+    handleShowTasks();
+}else{
+    alert('esht')
+}
+  };
 
   return (
     <>
@@ -179,54 +227,72 @@ const handleHideForm=(e:React.MouseEvent)=>{
                   ></i>
                 </Tooltip>
               </span>
+              
             </div>
           </div>
         </div>
-        {/* start first title */}
-        <div className="row">
-          <div className="col-12 col-sm-10 col-md-8 col-xl-6 mx-auto">
-            <div className="row">
-              {/* title and icon section */}
-              <div className="col-12 bg-dark alert alert-dark mb-0 rounded-bottom-0">
-                <div className="row  text-white">
-                  {/* title */}
-                  <div className="col-8" style={{ fontSize: "14px" }}>
-                    title
-                  </div>
-                  {/* icons */}
-                  <div className="col-4 text-end" style={{ fontSize: "14px" }}>
-                    <span className="" onClick={handleShowDescription}>
-                      <i className="bi bi-caret-down-fill"></i>
-                    </span>
-                    <span className="d-none" onClick={handleHideDescription}>
-                      <i className="bi bi-caret-up-fill"></i>
-                    </span>
-                    <span className="">
-                      <i className="bi bi-trash3-fill"></i>
-                    </span>
-                    <span className="">
-                      <i className="bi bi-pen-fill"></i>
-                    </span>
-                    <span className="">
-                      <Switch size="small" />
-                    </span>
+        {/* titles */}
+        {allTasks.length>0 ? (
+          allTasks.map((task) => {
+            return (
+              <div className="row" key={task.id}>
+                <div className="col-12 col-sm-10 col-md-8 col-xl-6 mx-auto">
+                  <div className="row">
+                    {/* title and icon section */}
+                    <div className="col-12 bg-dark alert alert-dark mb-0 rounded-bottom-0">
+                      <div className="row  text-white">
+                        {/* title */}
+                        <div className="col-8" style={{ fontSize: "14px" }}>
+                          {task.title}
+                        </div>
+                        {/* icons */}
+                        <div
+                          className="col-4 text-end"
+                          style={{ fontSize: "14px" }}
+                        >
+                          <span className="" onClick={handleShowDescription}>
+                            <i className="bi bi-caret-down-fill"></i>
+                          </span>
+                          <span
+                            className="d-none"
+                            onClick={handleHideDescription}
+                          >
+                            <i className="bi bi-caret-up-fill"></i>
+                          </span>
+                          <span className="">
+                            <i className="bi bi-trash3-fill"></i>
+                          </span>
+                          <span className="">
+                            <i className="bi bi-pen-fill"></i>
+                          </span>
+                          <span className="">
+                            <Switch size="small" checked={task.status} />
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    {/* description */}
+
+                    <div
+                      className="col-12 description"
+                      style={{ maxHeight: "0px", overflow: "hidden" }}
+                    >
+                      {task.description}
+                    </div>
                   </div>
                 </div>
               </div>
-              {/* description */}
-
-              <div
-                className="col-12 description"
-                style={{ maxHeight: "0px", overflow: "hidden" }}
-              >
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo
-                corrupti molestiae odit accusamus temporibus debitis quidem
-                nihil amet libero sed, laborum adipisci hic architecto alias!!!!
-              </div>
+            );
+          })
+        ) : (
+          <div className="row">
+            <div className="col-12 alert alert-danger text-center">
+              you have not any tasks
             </div>
           </div>
-        </div>
-        {/* end first Title */}
+        )}
+
+        {/* end Titles */}
         {/* form for adding new tasks*/}
         <div className="row  ">
           <div
@@ -239,20 +305,46 @@ const handleHideForm=(e:React.MouseEvent)=>{
               transform: "translate(-50%)",
             }}
           >
-            <TextField label="title" className="w-100" />
-            <TextField label="description" className="w-100 mt-2" />
-            <div className="clearfix mt-4">
-              <div className="float-start">
-                <Button color="info" className="border border-info">
-                  add new task
-                </Button>
+           
+              <TextField
+                label="title"
+                className="w-100"
+                name="title"
+                id="title"
+                onChange={(e)=>{
+                    titleRegex.test(e.target.value)?setTitleError(false):setTitleError(true)
+                }}
+              />
+              <TextField
+                label="description"
+                className="w-100 mt-2"
+                name="description"
+                id="description"
+                onChange={(e)=>{
+                    descriptionRegex.test(e.target.value)?setDescriptionError(false):setDescriptionError(true)
+                }}
+              />
+              <div className="clearfix mt-4">
+                <div className="float-start">
+                  <Button
+                    color="info"
+                    className="border border-info"
+                    onClick={handleAddingTask}
+                  >
+                    add new task
+                  </Button>
+                </div>
+                <div className="float-end">
+                  <Button
+                    color="warning"
+                    className="border border-warning"
+                    onClick={handleHideForm}
+                  >
+                    cancel
+                  </Button>
+                </div>
               </div>
-              <div className="float-end">
-                <Button color="warning" className="border border-warning" onClick={handleHideForm}>
-                  cancel
-                </Button>
-              </div>
-            </div>
+            
           </div>
         </div>
       </div>
@@ -260,4 +352,15 @@ const handleHideForm=(e:React.MouseEvent)=>{
   );
 }
 
-export default tasks;
+export default Tasks;
+
+export const getServerSideProps:GetServerSideProps=async(context)=>{
+  const response = await fetch(`http://localhost:3000/api/tasks`);
+  const data = await response.json();
+  return {
+    props: {
+      tasks: data,
+    },
+  };
+}
+

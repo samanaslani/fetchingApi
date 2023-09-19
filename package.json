@@ -29,6 +29,7 @@
     "typescript": "5.2.2"
   },
   "devDependencies": {
+    "@types/js-cookie": "^3.0.4",
     "@types/redux-logger": "^3.0.9"
   }
 }
