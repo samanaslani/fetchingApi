@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import Cookies from "js-cookie";
+import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import {
   Tooltip,
@@ -14,8 +13,8 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import Styles from "../../styles/Tasks.module.scss";
-import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
+import { GetServerSideProps } from "next";
 type taskType = {
   id: number;
   title: string;
@@ -157,19 +156,24 @@ function Tasks({ tasks }: tasksTypeFromSSR) {
   const [title, setTitle] = useState<string | null>(null);
   const [description, setDescription] = useState<string | null>(null);
   const [taskId, setTaskId] = useState<number | null>(null);
+  const [errors, setErrors] = useState<string>("");
   let titleRegex = /^[a-z\d\s]{3,20}$/i;
   let descriptionRegex = /^[a-z\d\W]{3,}$/i;
+  // handleSearchProduct
+
   // handleUpdatingTaskByIcon
   const handleUpdatingTaskByIcon = (id: number) => {
     setTaskId(id);
     handleShowFormAddingTask();
   };
+
   // handleShowTasks
   const handleShowTasks = async () => {
     const response = await fetch(`http://localhost:3000/api/tasks`);
     const data = await response.json();
     setTasks(data);
   };
+
   //   handleAddingTask
   const handleAddingTask = async () => {
     let newTask = {
@@ -178,7 +182,12 @@ function Tasks({ tasks }: tasksTypeFromSSR) {
       status: status,
     };
 
-    if (!titleError && !descriptionError && !statusError) {
+    if (
+      !titleError &&
+      !descriptionError &&
+      !statusError &&
+      !allTasks.find((item) => item.id === 1)
+    ) {
       const response = await fetch(`http://localhost:3000/api/tasks`, {
         method: "POST",
         body: JSON.stringify(newTask),
@@ -188,28 +197,33 @@ function Tasks({ tasks }: tasksTypeFromSSR) {
       });
       const data = await response.json();
 
-      handleShowTasks();
       handleHideForm();
+      handleShowTasks();
+      setErrors("");
     } else {
-      alert("esht");
+      setErrors("Oopts,something wents wrong");
     }
   };
   // handleDeleteTask
-  const handleDeleteTask = async (id: string) => {
+  const handleDeleteTask = async (id: number) => {
     const response = await fetch(`http://localhost:3000/api/tasks/${id}`, {
       method: "DELETE",
     });
     const data = await response.json();
-
     handleShowTasks();
   };
   // handleEditTask()
-  const handleEditTask = async (id: string) => {
-    if (!titleError && !descriptionError && !statusError) {
+  const handleEditTask = async (id: number) => {
+    if (
+      !titleError &&
+      !descriptionError &&
+      !statusError &&
+      !allTasks.find((item) => item.id === 1)
+    ) {
+      setErrors("");
       const response = await fetch(`http://localhost:3000/api/tasks/${id}`, {
         method: "PUT",
         body: JSON.stringify({
-          id: id,
           title: `${title}`,
           description: `${description}`,
           status: status,
@@ -219,12 +233,29 @@ function Tasks({ tasks }: tasksTypeFromSSR) {
         },
       });
       const data = await response.json();
+
+      handleHideForm();
       handleShowTasks();
+      setErrors("");
     } else {
-      alert("false");
+      setErrors("Oopts,something wents wrong");
     }
   };
-
+  const handleSearchProduct = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let filterProductsBySearching = allTasks.filter((item: taskType) =>
+      item.title.toLocaleLowerCase().includes(e.target.value)
+    );
+    if (filterProductsBySearching.length > 0 && e.target.value) {
+      setTasks(filterProductsBySearching);
+    }else if(!e.target.value){
+      handleShowTasks();
+      setTasks(tasks);
+    }
+     else {
+     
+      setTasks([]);
+    }
+  };
   return (
     <>
       <Head>
@@ -241,6 +272,7 @@ function Tasks({ tasks }: tasksTypeFromSSR) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="container mt-3">
+        {/* wrapper section */}
         <div
           className="wrapper"
           style={{
@@ -258,7 +290,7 @@ function Tasks({ tasks }: tasksTypeFromSSR) {
           {" "}
         </div>
         <div className="row">
-          <div className="col-12 clearfix mb-5">
+          <div className="col-12 clearfix mb-3">
             <div className="float-start fs-5">
               <Link
                 href={"/"}
@@ -275,12 +307,43 @@ function Tasks({ tasks }: tasksTypeFromSSR) {
                   <i
                     className="bi bi-plus-circle-fill text-danger"
                     onClick={() => {
-                      handleShowFormAddingTask();
                       setTaskId(null);
+                      handleShowFormAddingTask();
                     }}
                   ></i>
                 </Tooltip>
               </span>
+            </div>
+          </div>
+        </div>
+        <div className="row mb-3">
+          {/* search */}
+          <div className="col-12 col-md-9 mx-auto" style={{ height: "30px" }}>
+            <div className="row h-100 d-flex justify-content-center">
+              <div className="col-6 h-100" style={{ position: "relative" }}>
+                <input
+                  type="text"
+                  id="searchProduct"
+                  name="searchProduct"
+                  className={`w-100 h-100  ${Styles.search}`}
+                  style={{ position: "absolute", left: 0 }}
+                  onChange={(e) => handleSearchProduct(e)}
+                />
+              </div>
+
+              <div
+                className="col-1 h-100  d-flex flex-row justify-content-center"
+                style={{
+                  backgroundColor: "tomato",
+                  border: "1px  solid tomato",
+                  borderLeft: "0",
+                }}
+              >
+                <i
+                  className="bi bi-search text-white "
+                  style={{ lineHeight: "30px" }}
+                ></i>
+              </div>
             </div>
           </div>
         </div>
@@ -314,7 +377,7 @@ function Tasks({ tasks }: tasksTypeFromSSR) {
                           </span>
                           <span
                             className=""
-                            onClick={() => handleDeleteTask(`${task.id}`)}
+                            onClick={() => handleDeleteTask(task.id)}
                           >
                             <i className="bi bi-trash3-fill"></i>
                           </span>
@@ -364,6 +427,7 @@ function Tasks({ tasks }: tasksTypeFromSSR) {
               transform: "translate(-50%)",
             }}
           >
+            <div className="text-danger mb-4">{errors}</div>
             <TextField
               label="title"
               className="w-100"
@@ -425,7 +489,7 @@ function Tasks({ tasks }: tasksTypeFromSSR) {
                   color="info"
                   className="border border-info"
                   onClick={() => {
-                    taskId ? handleEditTask(`${taskId}`) : handleAddingTask();
+                    taskId ? handleEditTask(taskId) : handleAddingTask();
                   }}
                 >
                   {taskId ? "update task" : "add task"}

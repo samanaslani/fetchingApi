@@ -7,7 +7,7 @@ export default function MyApi(req: NextApiRequest, res: NextApiResponse) {
   } else if (req.method === "POST") {
     let getTask = req.body;
     let newTask = {
-      id: `${Date.now()}`,
+      id: Date.now(),
       title: getTask.title,
       description: getTask.description,
       status: getTask.status,

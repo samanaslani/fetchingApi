@@ -6,6 +6,7 @@ import Link from "next/link";
 
 
 import { useRouter } from "next/router";
+import { data } from "./Data";
 function Header() {
 
   // handleShowNavbar
@@ -59,24 +60,8 @@ function Header() {
     });
   }, []);
 
-  // handleSearchProduct
-  type searchingProductType = { title: string; id: number };
-  const [searchingProduct, setSearchingProduct] = useState<
-    searchingProductType[] | null
-  >(null);
-  {/*}
-  const handleSearchProduct = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let filterProductsBySearching = products.users.filter(
-      (item: searchingProductType) =>
-        item.title.toLocaleLowerCase().includes(e.target.value)
-    );
-    if (filterProductsBySearching.length > 0 && e.target.value) {
-      setSearchingProduct(filterProductsBySearching);
-    } else {
-      setSearchingProduct(null);
-    }
-  };
-*/}
+
+
   const router=useRouter();
   return (
     <div>
@@ -105,115 +90,7 @@ function Header() {
           </div>
         </div>
       </div>
-      {/* search and cart */}
-      <div className="container mt-3">
-        <div className="row">
-          {/* search */}
-          <div className="col-12 col-md-9" style={{ height: "30px" }}>
-            
-              <div className="row h-100 d-flex justify-content-center">
-                <div className="col-6 h-100" style={{ position: "relative" }}>
-                  <input
-                    type="text"
-                    id="searchProduct"
-                    name="searchProduct"
-                    className={`w-100 h-100  ${Styles.search}`}
-                    style={{ position: "absolute", left: 0 }}
-                    // onChange={(e) => handleSearchProduct(e)}
-                  />
-                </div>
 
-                <div
-                  className="col-1 h-100  d-flex flex-row justify-content-center"
-                  style={{
-                    backgroundColor: "tomato",
-                    border: "1px  solid tomato",
-                    borderLeft: "0",
-                  }}
-                >
-                  <i
-                    className="bi bi-search text-white "
-                    style={{ lineHeight: "30px" }}
-                  ></i>
-                </div>
-              </div>
-            
-
-            
-          </div>
-          {/* cart */}
-          <div
-            className="d-none d-md-block col-md-3"
-            style={{ height: "30px" }}
-          >
-            <div className="row">
-              <div className="col-6 h-100 text-end">
-                <Badge
-                  badgeContent={'0'}
-                  max={99}
-                  className=" "
-                  style={{ lineHeight: "30px" }}
-                >
-                  <i
-                    className="bi bi-cart4 fs-5"
-                    style={{ color: "tomato" }}
-                  ></i>
-                </Badge>
-              </div>
-              <div className="col-6 h-100">
-                <Badge
-                  badgeContent={1}
-                  max={99}
-                  className=" "
-                  style={{ lineHeight: "30px" }}
-                >
-                  <i
-                    className="bi bi-bag-heart fs-5"
-                    style={{ color: "tomato" }}
-                  ></i>
-                </Badge>
-              </div>
-            </div>
-          </div>
-        </div>
-        {searchingProduct && (
-          <div className="row">
-            <div className="col-12 col-md-9">
-              <div className="row d-flex justify-content-center">
-                <div
-                  className="col-11 overflow-auto"
-                  style={{
-                    height: searchingProduct.length >= 2 ? "60px" : "30px",
-                    borderLeft: "1px solid tomato",
-                    borderBottom: "1px solid tomato",
-                    borderRight: "1px solid tomato",
-                  }}
-                >
-                  {searchingProduct.map((item: searchingProductType) => {
-                    return (
-                      <div
-                        key={item.id}
-                        onClick={() => router.push(`/tasks/${item.id}`)}
-                        onMouseOver={(e: React.MouseEvent<HTMLDivElement>) =>
-                          ((e.target as HTMLDivElement).style.backgroundColor =
-                            "rgb(230,230,230)")
-                        }
-                        onMouseLeave={(e: React.MouseEvent<HTMLDivElement>) =>
-                          ((e.target as HTMLDivElement).style.backgroundColor =
-                            "rgb(250,250,250)")
-                        }
-                        style={{ cursor: "pointer" }}
-                      >
-                        {item.title}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
       {/* mobile navbar && cart */}
       <div
         className="bg-dark mt-3 text-warning d-md-none navBarSection"
@@ -243,7 +120,7 @@ function Header() {
       <div className="bg-dark mt-3 d-none d-md-block navBarSection">
         <div className="container">
           <div className="row">
-            <nav style={{ height: "30px", lineHeight: "30px" }}>
+            <nav className="col-10" style={{ height: "30px", lineHeight: "30px" }}>
               <ul className="d-flex list-unstyled">
                 <li className=" border-end border-muted px-2 bg-danger">
                   <Link
@@ -316,6 +193,39 @@ function Header() {
                 </li>
               </ul>
             </nav>
+            <div
+            className="d-none d-md-block col-md-2 text-warning"
+            style={{ height: "30px" }}
+          >
+            <div className="row">
+              <div className="col-6 h-100 text-end">
+                <Badge
+                  badgeContent={'0'}
+                  max={99}
+                  className=" "
+                  style={{ lineHeight: "20px" }}
+                >
+                  <i
+                    className="bi bi-cart4 fs-5"
+                    style={{ color: "tomato" }}
+                  ></i>
+                </Badge>
+              </div>
+              <div className="col-6 h-100">
+                <Badge
+                  badgeContent={1}
+                  max={99}
+                  className=" "
+                  style={{ lineHeight: "20px" }}
+                >
+                  <i
+                    className="bi bi-bag-heart fs-5"
+                    style={{ color: "tomato" }}
+                  ></i>
+                </Badge>
+              </div>
+            </div>
+          </div>
           </div>
         </div>
       </div>

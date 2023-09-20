@@ -12,3 +12,19 @@
     from{transform: translate(-50%,0%);}
     to{transform: translate(-50%,-1000%);}
 }
+.search {
+    border: 1px solid tomato;
+  }
+  .search:focus {
+    outline: none;
+    border: 1px solid tomato;
+  }
+  .category {
+    border: 1px solid tomato;
+    border-left: 0;
+  }
+  .category:focus {
+    outline: none;
+    border: 1px solid tomato;
+    border-left: 0;
+  }
