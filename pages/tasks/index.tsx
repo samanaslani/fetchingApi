@@ -247,12 +247,10 @@ function Tasks({ tasks }: tasksTypeFromSSR) {
     );
     if (filterProductsBySearching.length > 0 && e.target.value) {
       setTasks(filterProductsBySearching);
-    }else if(!e.target.value){
+    } else if (!e.target.value) {
       handleShowTasks();
       setTasks(tasks);
-    }
-     else {
-     
+    } else {
       setTasks([]);
     }
   };
